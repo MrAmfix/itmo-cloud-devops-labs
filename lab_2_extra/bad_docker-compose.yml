@@ -15,7 +15,7 @@ services:
     container_name: devops_api
     build:
       context: ./
-      dockerfile: ./Dockerfile
+      dockerfile: ../Dockerfile
     environment:
       DB_HOST: "postgres"
       DB_NAME: "devops"
