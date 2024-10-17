@@ -23,7 +23,6 @@ services:
       - "3002:8000"
     depends_on:
       - postgres
-    restart: always
     networks:
       - api_network
 
