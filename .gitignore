@@ -1,0 +1,7 @@
+venv
+venv/
+/venv
+.idea
+.idea/
+/.idea
+lab_2_extra/.env
