@@ -1,0 +1,25 @@
+version: '3.0'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: devops_db
+    environment:
+      POSTGRES_DB: "devops"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "verystrongpassword"
+    ports:
+      - "5432:5432"
+
+  api:
+    container_name: devops_api
+    build:
+      context: ./
+      dockerfile: ../Dockerfile
+    environment:
+      DB_HOST: "postgres"
+      DB_NAME: "devops"
+      DB_USER: "postgres"
+      DB_PASS: "verystrongpassword"
+    ports:
+      - "3002:8000"
