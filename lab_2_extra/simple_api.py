@@ -1,60 +1,30 @@
-import asyncio
-import uvicorn
-from fastapi import FastAPI, APIRouter, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select
+from fastapi import FastAPI, Depends
+from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from database.User import User
-from database.init_database import get_session
-from database.init_database import init_database
-
-rt = APIRouter(prefix='/api')
-
-
-@rt.get('/reg_user')
-async def registration_user(
-        name: str,
-        age: int,
-        session: AsyncSession = Depends(get_session)
-):
-    new_user = User(name=name, age=age)
-    session.add(new_user)
-    await session.commit()
-    await session.refresh(new_user)
-    return {'instance': new_user}
-
-
-@rt.get('/get_users')
-async def get_users_by_name(
-        name: str,
-        session: AsyncSession = Depends(get_session)
-):
-    users = await session.execute(select(User).filter_by(name=name))
-    return {'users': users.scalars().all()}
+from database.User import Base, User
+from database.utils import engine, get_session
 
 
 app = FastAPI()
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
-    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin", "Authorization"],
-)
-
-app.include_router(rt)
 
 
-async def main():
-    await init_database()
+@app.on_event("startup")
+async def on_startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 
-if __name__ == '__main__':
-    asyncio.run(main())
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+@app.get("/api/reg_user")
+async def register_user(name: str, age: int, db: AsyncSession = Depends(get_session)):
+    new_user = User(name=name, age=age)
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+    return {"message": "User registered successfully", "User": {"id": new_user.id, "name": name, "age": age}}
+
+
+@app.get("/api/get_users")
+async def get_users(name: str, db: AsyncSession = Depends(get_session)):
+    result = await db.execute(select(User).where(User.name == name))
+    users = result.scalars().all()
+    return {"users": [{"id": user.id, "name": user.name, "age": user.age} for user in users]}

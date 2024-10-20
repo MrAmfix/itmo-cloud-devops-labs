@@ -1,33 +1,31 @@
-version: '3.0'
+version: '3.8'
 
 services:
-  postgres:
-    image: postgres:16.0
-    container_name: devops_db
+  database:
+    image: postgres:13
     environment:
-      POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "3001:5433"
     restart: always
-    networks:
-      - db_network
+#    networks:
+#      - first
 
   api:
-    container_name: devops_api
-    build:
-      context: ./
-      dockerfile: ./Dockerfile
+    build: .
     ports:
-      - "3002:8000"
+      - "8000:8000"
+    env_file:
+      - .env
     depends_on:
-      - postgres
-    networks:
-      - api_network
+      - database
+#    networks:
+#      - second
 
 networks:
-  api_network:
+  first:
     driver: bridge
-  db_network:
+  second:
     driver: bridge
