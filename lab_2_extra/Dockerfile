@@ -1,7 +1,8 @@
-FROM python:3.12-bookworm
+FROM python:3.12-slim
 
 WORKDIR /app
-COPY . /lab_2_extra/
-RUN pip install --no-cache-dir -r /lab_2_extra/requirements.txt
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+EXPOSE 8000
 
-CMD ["python", "/lab_2_extra/simple_api.py"]
+CMD ["uvicorn", "simple_api:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
