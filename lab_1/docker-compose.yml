@@ -1,0 +1,39 @@
+version: '3.0'
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/SERT_NAME.crt:/etc/ssl/SERT_NAME.crt
+      - ./nginx/SERT_NAME.key:/etc/ssl/SERT_NAME.key
+      - ./service1:/var/www/service1
+      - ./service2:/var/www/service2
+    depends_on:
+      - service1
+      - service2
+    networks:
+      - nginx-network
+
+  service1:
+    build:
+      context: ./service1
+    ports:
+      - "8000:8000"
+    networks:
+      - nginx-network
+
+  service2:
+    build:
+      context: ./service2
+    ports:
+      - "8001:8001"
+    networks:
+      - nginx-network
+
+networks:
+  nginx-network:
+    driver: bridge
