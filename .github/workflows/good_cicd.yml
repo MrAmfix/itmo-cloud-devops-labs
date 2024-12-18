@@ -60,7 +60,11 @@ jobs:
             sleep 2
           done
 
+      - name: Verify API is running
+        run: |
+          docker ps | grep "simple_api"
+
       - name: Run API tests
         run: |
-          cd ./lab_3
-          docker compose run --rm api pytest ./tests.py --verbose
+          sleep 5  # Даем время сервису API полностью запуститься
+          pytest ./lab_3/tests.py --verbose

@@ -2,7 +2,7 @@ import pytest
 import httpx
 
 
-API_PREFIX = f"http://api:8000/api"
+API_PREFIX = f"http://localhost:8000/api"
 
 
 @pytest.fixture
