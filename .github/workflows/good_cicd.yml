@@ -27,7 +27,7 @@ jobs:
 
       - name: Verify API availability # Проверка доступности API
         run: |
-          curl -f http://localhost:8001/api/hash_code?s=test || exit 1
+          curl -f http://localhost:8000/api/hash_code?s=test || exit 1
 
   test:
     runs-on: ubuntu-22.04
