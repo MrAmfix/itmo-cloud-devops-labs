@@ -1,0 +1,7 @@
+FROM python:3.12-bookworm
+
+WORKDIR /app
+COPY requirements.txt simple_api.py /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "/app/simple_api.py"]

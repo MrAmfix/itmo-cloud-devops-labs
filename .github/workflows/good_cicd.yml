@@ -1,0 +1,51 @@
+name: CI/CD for API
+
+on:
+  push:
+    branches:
+      - main # Указываем конкретные ветки при пуше в которые надо запускать pipeline
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04 # Указываем конкретную версию
+
+    steps:
+      - name: Checkout repository # Прописывание названий шагов для понятности
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and run containers
+        run: |
+          cd ./lab_3
+          docker compose up -d --build
+
+      - name: Verify running containers
+        run: |
+          docker ps
+
+      - name: Verify API availability # Проверка доступности API
+        run: |
+          curl -f http://localhost:8000/api/hash_code?s=test || exit 1
+
+  test:
+    runs-on: ubuntu-22.04
+    needs: build # Запускать только после успешного завершения build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python for testing
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12' # Версия Python для выполнения тестов
+
+      - name: Install dependencies for testing
+        run: |
+          pip install pytest httpx
+
+      - name: Run API tests
+        run: |
+          pytest ./lab_3/tests.py --verbose
