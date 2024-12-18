@@ -26,8 +26,9 @@ jobs:
           docker ps
 
       - name: Verify API availability # Проверка доступности API
+        # Тут усыпил на 2 секунды, чтобы контейнер успел подняться
         run: |
-          sleep 2
+          sleep 2 
           curl -f http://localhost:8000/api/hash_code?s=test || exit 1
 
   test:
