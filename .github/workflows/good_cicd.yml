@@ -31,6 +31,14 @@ jobs:
           sleep 2 
           curl -f http://localhost:8000/api/hash_code?s=test || exit 1
 
+  test:
+    runs-on: ubuntu-22.04 # Указываем конкретную версию
+    needs: build # Тесты зависят от выполнения job build
+
+    steps:
+      - name: Checkout repository # Прописывание названий шагов для понятности
+        uses: actions/checkout@v3
+
       - name: Install dependencies for testing
         run: |
           pip install pytest httpx
