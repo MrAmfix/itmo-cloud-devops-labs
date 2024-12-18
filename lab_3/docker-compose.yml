@@ -7,5 +7,5 @@ services:
       dockerfile: Dockerfile
     container_name: simple_api
     ports:
-      - "8000:8000"
+      - "8001:8000"
     restart: always
