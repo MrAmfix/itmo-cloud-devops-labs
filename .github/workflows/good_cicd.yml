@@ -50,4 +50,5 @@ jobs:
 
       - name: Run API tests
         run: |
+          sleep 2
           pytest ./lab_3/tests.py --verbose
