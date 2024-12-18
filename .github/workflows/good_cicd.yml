@@ -31,25 +31,9 @@ jobs:
           sleep 2 
           curl -f http://localhost:8000/api/hash_code?s=test || exit 1
 
-  test:
-    runs-on: ubuntu-22.04
-    needs: build # Запускать только после успешного завершения build
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build and run containers
+      - name: Install dependencies for testing
         run: |
-          cd ./lab_3
-          docker compose up -d --build
-
-      - name: Verify running containers
-        run: |
-          docker ps
+          pip install pytest httpx
 
       - name: Run API tests
         run: |
