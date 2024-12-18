@@ -51,4 +51,5 @@ jobs:
       - name: Run API tests
         run: |
           sleep 2
-          pytest ./lab_3/tests.py --verbose
+          cd ./lab_3
+          docker compose exec -T api pytest ./tests.py --verbose
