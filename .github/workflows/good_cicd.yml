@@ -48,8 +48,19 @@ jobs:
         run: |
           pip install pytest httpx
 
+      - name: Wait for API to be ready
+        run: |
+          cd ./lab_3
+          for i in {1..5}; do
+            if docker compose ps | grep "Up"; then
+             echo "API service is up!"
+             break
+            fi
+            echo "Waiting for API service to start..."
+            sleep 2
+          done
+
       - name: Run API tests
         run: |
-          sleep 2
           cd ./lab_3
-          docker compose exec -T api pytest ./tests.py --verbose
+          docker compose run --rm api pytest ./tests.py --verbose
