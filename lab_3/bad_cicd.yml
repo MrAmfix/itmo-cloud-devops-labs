@@ -1,11 +1,11 @@
 name: CI/CD for API
 
 on:
-  push:
+  push: # Запускаем pipeline при пуше в любую ветку
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Не указываем конкретную версию
 
     steps:
       - uses: actions/checkout@v3
