@@ -24,6 +24,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx
 
+      - name: Cache pip dependencies # Кэширование pip зависимостей
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies for testing
+        run: |
+          pip install -r lab_3/requirements-test.txt
+
       - name: Build and run containers
         run: |
           docker compose -f ./lab_3/docker-compose.yml up -d --build
@@ -38,11 +50,6 @@ jobs:
           sleep 2 
           curl -f http://localhost:8000/api/hash_code?s=test || exit 1
 
-      - name: Install dependencies for testing
-        run: |
-          pip install pytest httpx
-
       - name: Run API tests
         run: |
-          sleep 2
           pytest ./lab_3/tests.py --verbose
